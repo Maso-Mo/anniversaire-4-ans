@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    /* On utilise du CSS pur ici pour être sûr que ça marche sans erreur */
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    background: radial-gradient(circle, #ff2d2d 0%, #800000 70%, #330000 100%);
+    background-attachment: fixed;
+  }
+}
+
+/* Si tu veux quand même utiliser Tailwind pour le reste */
+.timer-glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8;
+}
