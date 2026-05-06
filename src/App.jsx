@@ -26,13 +26,18 @@ export default function App() {
     "C’est toi que je choisis. Encore, et encore. ❤️"
   ];
 
- const images = Array.from({ length: 17 }).map((_, i) => {
-  return {
-    // On enlève /src/assets car le dossier est maintenant dans public
-    src: i === 0 ? `/image-react/image.jpeg` : `/image-react/image-${i}.jpeg`,
-    texte: fragmentsPoeme[i]
-  };
-});
+  const images = Array.from({ length: 17 }).map((_, i) => {
+    const fileName = i === 0 ? "image.jpeg" : `image-${i}.jpeg`;
+    const path = `/image-react/${fileName}`;
+    
+    // Petit log pour debugger si besoin dans ton navigateur (F12)
+    console.log("Chargement de l'image :", path);
+
+    return {
+      src: path,
+      texte: fragmentsPoeme[i]
+    };
+  });
 
   useEffect(() => {
     const targetDate = new Date('2026-05-07T00:00:00+04:00').getTime();
