@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function App() {
-  const [step, setStep] = useState(1); // 1: Timer, 2: Message, 3: Poème & Galerie
+  const [step, setStep] = useState(1);
   const [timeLeft, setTimeLeft] = useState({ h: "00", m: "00", s: "00" });
   const [hearts, setHearts] = useState([]);
 
@@ -26,24 +26,19 @@ export default function App() {
     "C’est toi que je choisis. Encore, et encore. ❤️"
   ];
 
-  const images = Array.from({ length: 17 }).map((_, i) => {
-    const fileName = i === 0 ? "image.jpeg" : `image-${i}.jpeg`;
-    const path = `/image-react/${fileName}`;
-    
-    // Petit log pour debugger si besoin dans ton navigateur (F12)
-    console.log("Chargement de l'image :", path);
-
-    return {
-      src: path,
-      texte: fragmentsPoeme[i]
-    };
-  });
+  const images = Array.from({ length: 17 }).map((_, i) => ({
+    src: i === 0 ? "/image-react/image.jpeg" : `/image-react/image-${i}.jpeg`,
+    texte: fragmentsPoeme[i]
+  }));
 
   useEffect(() => {
-    const targetDate = new Date('2026-05-07T00:00:00+04:00').getTime();
+    // Pour le test : on définit la fin dans 10 secondes
+    const targetDate = new Date().getTime() + 10000; 
+
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const diff = targetDate - now;
+
       if (diff <= 0) {
         clearInterval(timer);
         setStep(2);
@@ -63,11 +58,11 @@ export default function App() {
   }, []);
 
   const generateHearts = () => {
-    const newHearts = Array.from({ length: 50 }).map((_, i) => ({
+    const newHearts = Array.from({ length: 30 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100 + "%",
       delay: Math.random() * 5 + "s",
-      size: Math.random() * 25 + 15 + "px",
+      size: Math.random() * 20 + 10 + "px",
       duration: Math.random() * 3 + 2 + "s"
     }));
     setHearts(newHearts);
@@ -85,51 +80,38 @@ export default function App() {
       ))}
 
       {step === 1 && (
-        <div style={boxStyle}>
-          <p style={{ letterSpacing: '8px', opacity: 0.7, fontSize: '0.9rem', marginBottom: '20px' }}>
+        <div style={boxStyle} className="responsive-box">
+          <p style={{ letterSpacing: '4px', opacity: 0.7, fontSize: '0.8rem', marginBottom: '20px' }}>
             NOTRE HISTOIRE CONTINUE DANS
           </p>
-          <div style={timerTextStyle}>
+          <div className="timer-text">
             {timeLeft.h}<span style={unitLabel}>H</span> : {timeLeft.m}<span style={unitLabel}>M</span> : {timeLeft.s}<span style={unitLabel}>S</span>
           </div>
-          <p style={{ marginTop: '20px', fontSize: '0.8rem', opacity: 0.5 }}>HEURE DE MAURICE</p>
+          <p style={{ marginTop: '20px', fontSize: '0.7rem', opacity: 0.5 }}>HEURE DE MAURICE</p>
         </div>
       )}
 
       {step === 2 && (
-        <div style={{ textAlign: 'center', zIndex: 100, animation: 'fadeIn 1.2s ease-out', padding: '20px' }}>
-          <h1 style={titleStyle}>JOYEUX 4 ANS ! ❤️</h1>
-          <p style={{ fontSize: '1.4rem', marginBottom: '40px' }}>
-            Chaque seconde à tes côtés est un cadeau.
-          </p>
-          <button onClick={() => setStep(3)} style={buttonStyle}>
-            Découvrir nos souvenirs ✨
-          </button>
+        <div style={{ textAlign: 'center', zIndex: 100, padding: '20px' }}>
+          <h1 className="title-responsive">JOYEUX 4 ANS ! ❤️</h1>
+          <p style={{ fontSize: '1.1rem', marginBottom: '30px' }}>Chaque seconde à tes côtés est un cadeau.</p>
+          <button onClick={() => setStep(3)} style={buttonStyle}>Découvrir nos souvenirs ✨</button>
         </div>
       )}
 
       {step === 3 && (
         <div style={galleryPageStyle}>
           <div style={poemBoxStyle}>
-            <h2 style={{ marginBottom: '25px', color: '#ff4d4d' }}>À ma complice,</h2>
-            <p style={poemTextStyle}>
-              Quatre années à t'aimer, à rire et à grandir,<br/>
-              Quatre années de bonheur que je ne peux finir.<br/>
-              De nos premiers instants aux rêves de demain,<br/>
-              Je ne lâche jamais la douceur de ta main.
+            <h2 style={{ marginBottom: '15px', color: '#ff4d4d' }}>À ma complice,</h2>
+            <p style={{ fontSize: '1.1rem', fontStyle: 'italic', lineHeight: '1.6' }}>
+              Quatre années à t'aimer, à rire et à grandir...
             </p>
           </div>
 
-          <div style={gridStyle}>
+          <div className="responsive-grid">
             {images.map((img, idx) => (
               <div key={idx} className="photo-frame">
-                <img 
-                  src={img.src} 
-                  alt="Souvenir" 
-                  style={imgStyle} 
-                  onError={(e) => { e.target.parentElement.style.display = 'none'; }}
-                />
-                {/* AJOUT DU TEXTE DU POÈME ICI */}
+                <img src={img.src} alt="Souvenir" style={imgStyle} onError={(e) => e.target.parentElement.style.display='none'} />
                 <p style={textUnderImgStyle}>{img.texte}</p>
               </div>
             ))}
@@ -142,73 +124,101 @@ export default function App() {
           0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 
           100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } 
         }
+        @keyframes heartbeat {
+          0% { transform: scale(1); }
+          15% { transform: scale(1.05); }
+          30% { transform: scale(1); }
+          45% { transform: scale(1.1); }
+          60% { transform: scale(1); }
+        }
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateY(50px) rotate(10deg); }
+          to { opacity: 1; transform: translateY(0) rotate(${Math.random() * 4 - 2}deg); }
+        }
+
         .falling-heart { position: absolute; top: -10%; z-index: 50; animation: fall linear infinite; }
         
-        .photo-frame { 
-          background: white; padding: 12px; padding-bottom: 45px; 
-          box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
-          transform: rotate(${Math.random() * 8 - 4}deg);
-          transition: transform 0.4s;
-          animation: fadeIn 0.8s ease-out both;
+        .timer-text { 
+          font-size: 2.5rem; 
+          font-weight: bold; 
+          font-family: monospace; 
+          animation: heartbeat 1.5s infinite ease-in-out; /* Effet battement */
         }
-        .photo-frame:hover { transform: scale(1.05) rotate(0deg); z-index: 100; }
+
+        .responsive-grid {
+          display: grid;
+          grid-template-columns: repeat(1, 1fr);
+          gap: 30px;
+          width: 100%;
+          padding: 0 20px 50px 20px;
+        }
+
+        @media (min-width: 600px) { .responsive-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .responsive-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .photo-frame { 
+          background: white; padding: 10px; padding-bottom: 25px; 
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+          animation: slideIn 0.8s ease-out both; /* Entrée stylée */
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
         
-        @keyframes fadeIn { 
-          from { opacity: 0; transform: translateY(30px); } 
-          to { opacity: 1; transform: translateY(0); } 
+        .photo-frame:hover { 
+          transform: scale(1.05) rotate(0deg) !important; 
+          z-index: 10; 
+          box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .title-responsive { 
+          font-size: 2.5rem; 
+          font-weight: 900;
+          text-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        @media (min-width: 768px) {
+          .title-responsive { font-size: 4rem; }
+        }
+
+        .responsive-box {
+          width: 90%;
+          max-width: 500px;
+          margin: 0 auto;
         }
       `}</style>
     </div>
   );
 }
 
-// TES STYLES D'ORIGINE PRÉSERVÉS
+// STYLES
 const containerStyle = {
   minHeight: '100vh', width: '100vw',
   background: 'radial-gradient(circle, #ff2d2d 0%, #800000 70%, #220000 100%)',
   color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-  overflowY: 'auto', padding: '60px 0', fontFamily: 'serif'
+  overflowX: 'hidden', overflowY: 'auto', padding: '40px 0', fontFamily: 'serif'
 };
 
 const boxStyle = {
-  background: 'rgba(0, 0, 0, 0.25)', padding: '50px', borderRadius: '40px',
+  background: 'rgba(0, 0, 0, 0.25)', padding: '40px 20px', borderRadius: '30px',
   backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.1)',
   textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
 };
 
-const timerTextStyle = { fontSize: '4.5rem', fontWeight: 'bold', fontFamily: 'monospace' };
-const unitLabel = { fontSize: '1rem', marginLeft: '5px', opacity: 0.5 };
-const titleStyle = { fontSize: '4rem', fontWeight: '900', marginBottom: '20px' };
+const unitLabel = { fontSize: '0.8rem', marginLeft: '3px', opacity: 0.5 };
 
 const buttonStyle = {
-  padding: '15px 40px', fontSize: '1.2rem', borderRadius: '30px', border: 'none',
+  padding: '12px 30px', fontSize: '1rem', borderRadius: '25px', border: 'none',
   background: 'white', color: '#800000', fontWeight: 'bold', cursor: 'pointer'
 };
 
-const galleryPageStyle = { width: '90%', maxWidth: '1000px', display: 'flex', flexDirection: 'column', alignItems: 'center' };
+const galleryPageStyle = { width: '100%', maxWidth: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center' };
 
 const poemBoxStyle = {
-  textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '40px',
-  borderRadius: '25px', marginBottom: '50px', backdropFilter: 'blur(10px)',
-  border: '1px solid rgba(255,255,255,0.1)'
+  textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '30px 20px',
+  borderRadius: '20px', marginBottom: '40px', width: '90%', border: '1px solid rgba(255,255,255,0.1)'
 };
 
-const poemTextStyle = { fontSize: '1.3rem', fontStyle: 'italic', lineHeight: '1.8' };
+const imgStyle = { width: '100%', height: 'auto', maxHeight: '300px', objectFit: 'cover' };
 
-const gridStyle = {
-  display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-  gap: '30px', width: '100%', paddingBottom: '50px'
-};
-
-const imgStyle = { width: '100%', height: '240px', objectFit: 'cover' };
-
-// STYLE POUR TON TEXTE SOUS LA PHOTO
 const textUnderImgStyle = {
-  color: '#333',
-  marginTop: '15px',
-  fontSize: '0.9rem',
-  fontStyle: 'italic',
-  textAlign: 'center',
-  lineHeight: '1.4',
-  padding: '0 5px'
+  color: '#333', marginTop: '12px', fontSize: '0.85rem', fontStyle: 'italic', textAlign: 'center', padding: '0 5px'
 };
