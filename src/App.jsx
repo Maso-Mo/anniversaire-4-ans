@@ -5,19 +5,39 @@ export default function App() {
   const [timeLeft, setTimeLeft] = useState({ h: "00", m: "00", s: "00" });
   const [hearts, setHearts] = useState([]);
 
-  // Chemins de tes 17 images dans src/assets/image-react/
+  // Ton poème découpé en 17 parties
+  const fragmentsPoeme = [
+    "Je ne sais pas exactement quand tout a changé,",
+    "Quand ton nom est devenu une habitude dans mes pensées,",
+    "Quand ton absence a commencé à peser plus lourd que le silence.",
+    "Ce que je sais, c’est qu’avec toi, rien n’est banal.",
+    "Tu es entrée dans ma vie sans prévenir,",
+    "Et tu as pris une place que je ne peux plus imaginer vide.",
+    "Il y a des jours simples, où on parle de rien,",
+    "Mais même dans ces moments-là, tout a plus de sens.",
+    "Et il y a des jours compliqués, où tout semble fragile,",
+    "Mais même là, je ne doute pas de nous.",
+    "Parce que t’aimer, ce n’est pas juste un sentiment,",
+    "C’est une décision que je prends encore, chaque jour, sans hésiter.",
+    "Je ne te promets pas un conte parfait,",
+    "Je ne te promets pas de ne jamais tomber,",
+    "Mais je te promets de rester, même quand ce sera difficile.",
+    "Tu es ce mélange rare, de douceur et de force,",
+    "C’est toi que je choisis. Encore, et encore. ❤️"
+  ];
+
   const images = Array.from({ length: 17 }).map((_, i) => {
-    return i === 0 ? `/src/assets/image-react/image.jpeg` : `/src/assets/image-react/image-${i}.jpeg`;
+    return {
+      src: i === 0 ? `/src/assets/image-react/image.jpeg` : `/src/assets/image-react/image-${i}.jpeg`,
+      texte: fragmentsPoeme[i]
+    };
   });
 
   useEffect(() => {
-    // CIBLE : Minuit pile à Maurice (UTC+4)
     const targetDate = new Date('2026-05-07T00:00:00+04:00').getTime();
-
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const diff = targetDate - now;
-
       if (diff <= 0) {
         clearInterval(timer);
         setStep(2);
@@ -49,7 +69,6 @@ export default function App() {
 
   return (
     <div style={containerStyle}>
-      {/* PLUIE DE COEURS GLOBALE */}
       {step >= 2 && hearts.map(h => (
         <span key={h.id} className="falling-heart" style={{ 
           left: h.left, 
@@ -59,7 +78,6 @@ export default function App() {
         }}>❤️</span>
       ))}
 
-      {/* ETAPE 1 : LE COMPTE À REBOURS */}
       {step === 1 && (
         <div style={boxStyle}>
           <p style={{ letterSpacing: '8px', opacity: 0.7, fontSize: '0.9rem', marginBottom: '20px' }}>
@@ -72,7 +90,6 @@ export default function App() {
         </div>
       )}
 
-      {/* ETAPE 2 : LE MESSAGE FLASH */}
       {step === 2 && (
         <div style={{ textAlign: 'center', zIndex: 100, animation: 'fadeIn 1.2s ease-out', padding: '20px' }}>
           <h1 style={titleStyle}>JOYEUX 4 ANS ! ❤️</h1>
@@ -85,7 +102,6 @@ export default function App() {
         </div>
       )}
 
-      {/* ETAPE 3 : POÈME ET GALERIE */}
       {step === 3 && (
         <div style={galleryPageStyle}>
           <div style={poemBoxStyle}>
@@ -102,11 +118,13 @@ export default function App() {
             {images.map((img, idx) => (
               <div key={idx} className="photo-frame">
                 <img 
-                  src={img} 
+                  src={img.src} 
                   alt="Souvenir" 
                   style={imgStyle} 
                   onError={(e) => { e.target.parentElement.style.display = 'none'; }}
                 />
+                {/* AJOUT DU TEXTE DU POÈME ICI */}
+                <p style={textUnderImgStyle}>{img.texte}</p>
               </div>
             ))}
           </div>
@@ -121,7 +139,7 @@ export default function App() {
         .falling-heart { position: absolute; top: -10%; z-index: 50; animation: fall linear infinite; }
         
         .photo-frame { 
-          background: white; padding: 12px; padding-bottom: 35px; 
+          background: white; padding: 12px; padding-bottom: 45px; 
           box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
           transform: rotate(${Math.random() * 8 - 4}deg);
           transition: transform 0.4s;
@@ -138,7 +156,7 @@ export default function App() {
   );
 }
 
-// STYLES OBJET
+// TES STYLES D'ORIGINE PRÉSERVÉS
 const containerStyle = {
   minHeight: '100vh', width: '100vw',
   background: 'radial-gradient(circle, #ff2d2d 0%, #800000 70%, #220000 100%)',
@@ -154,7 +172,6 @@ const boxStyle = {
 
 const timerTextStyle = { fontSize: '4.5rem', fontWeight: 'bold', fontFamily: 'monospace' };
 const unitLabel = { fontSize: '1rem', marginLeft: '5px', opacity: 0.5 };
-
 const titleStyle = { fontSize: '4rem', fontWeight: '900', marginBottom: '20px' };
 
 const buttonStyle = {
@@ -178,3 +195,14 @@ const gridStyle = {
 };
 
 const imgStyle = { width: '100%', height: '240px', objectFit: 'cover' };
+
+// STYLE POUR TON TEXTE SOUS LA PHOTO
+const textUnderImgStyle = {
+  color: '#333',
+  marginTop: '15px',
+  fontSize: '0.9rem',
+  fontStyle: 'italic',
+  textAlign: 'center',
+  lineHeight: '1.4',
+  padding: '0 5px'
+};
