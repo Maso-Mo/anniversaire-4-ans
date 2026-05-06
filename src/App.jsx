@@ -26,12 +26,13 @@ export default function App() {
     "C’est toi que je choisis. Encore, et encore. ❤️"
   ];
 
-  const images = Array.from({ length: 17 }).map((_, i) => {
-    return {
-      src: i === 0 ? `/src/assets/image-react/image.jpeg` : `/src/assets/image-react/image-${i}.jpeg`,
-      texte: fragmentsPoeme[i]
-    };
-  });
+ const images = Array.from({ length: 17 }).map((_, i) => {
+  return {
+    // On enlève /src/assets car le dossier est maintenant dans public
+    src: i === 0 ? `/image-react/image.jpeg` : `/image-react/image-${i}.jpeg`,
+    texte: fragmentsPoeme[i]
+  };
+});
 
   useEffect(() => {
     const targetDate = new Date('2026-05-07T00:00:00+04:00').getTime();
